@@ -12,7 +12,6 @@ from dateparser.utils import set_correct_day_from_settings, \
     _get_missing_parts
 from dateparser.utils.strptime import strptime
 
-
 NSP_COMPATIBLE = re.compile(r'\D+')
 MERIDIAN = re.compile(r'am|pm')
 MICROSECOND = re.compile(r'\d{1,6}')
@@ -50,7 +49,6 @@ date_order_chart = {
 
 
 def resolve_date_order(order, lst=None):
-
     chart_list = {
         'DMY': ['day', 'month', 'year'],
         'DYM': ['day', 'year', 'month'],
@@ -209,7 +207,6 @@ def _check_strict_parsing(missing, settings):
 
 
 class _parser:
-
     alpha_directives = OrderedDict([
         ('weekday', ['%A', '%a']),
         ('month', ['%B', '%b']),
@@ -319,7 +316,11 @@ class _parser:
             for res in results:
                 if len(token) == 4 and res[0] == 'year':
                     skip_component = 'year'
-                setattr(self, *res)
+
+                if res[0] == "year":
+                    setattr(self, *("year", int(token)))
+                else:
+                    setattr(self, *res)
 
         known, unknown = get_unresolved_attrs(self)
         params = {}
@@ -355,12 +356,12 @@ class _parser:
             error_text = e.__str__()
             error_msgs = ['day is out of range', 'day must be in']
             if error_msgs[0] in error_text or error_msgs[1] in error_text:
-                if not(self._token_day or hasattr(self, '_token_weekday')):
+                if not (self._token_day or hasattr(self, '_token_weekday')):
                     # if day is not available put last day of the month
                     params['day'] = get_last_day_of_month(params['year'], params['month'])
                     return datetime(**params)
                 elif not self._token_year and params['day'] == 29 and params['month'] == 2 and \
-                        not calendar.isleap(params['year']):
+                    not calendar.isleap(params['year']):
                     # fix the year when year is not present and it is 29 of February
                     params['year'] = self._get_correct_leap_year(self.settings.PREFER_DATES_FROM, params['year'])
                     return datetime(**params)
@@ -422,7 +423,7 @@ class _parser:
 
         token_weekday, _ = getattr(self, '_token_weekday', (None, None))
 
-        if token_weekday and not(self._token_year or self._token_month or self._token_day):
+        if token_weekday and not (self._token_year or self._token_month or self._token_day):
             day_index = calendar.weekday(dateobj.year, dateobj.month, dateobj.day)
             day = token_weekday[:3].lower()
             steps = 0
@@ -450,7 +451,7 @@ class _parser:
 
         # NOTE: If this assert fires, self.now needs to be made offset-aware in a similar
         # way that dateobj is temporarily made offset-aware.
-        assert not (self.now.tzinfo is None and dateobj.tzinfo is not None),\
+        assert not (self.now.tzinfo is None and dateobj.tzinfo is not None), \
             "`self.now` doesn't have `tzinfo`. Review comment in code for details."
 
         # Store the original dateobj values so that upon subsequent parsing everything is not
