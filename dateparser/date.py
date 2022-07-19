@@ -221,12 +221,13 @@ class _DateLocaleParser:
             if self._settings.PREFER_LOCALE_DATE_ORDER:
                 if 'DATE_ORDER' not in self._settings._mod_settings:
                     self._settings.DATE_ORDER = self.locale.info.get('date_order', _order)
-            date_obj, period = date_parser.parse(
+            date_obj, period, missing = date_parser.parse(
                 self._get_translated_date(), parse_method=parse_method, settings=self._settings)
             self._settings.DATE_ORDER = _order
             return DateData(
                 date_obj=date_obj,
                 period=period,
+                missing=missing
             )
         except ValueError:
             self._settings.DATE_ORDER = _order
@@ -271,10 +272,11 @@ class DateData:
     It can be accessed with square brackets like a dict object.
     """
 
-    def __init__(self, *, date_obj=None, period=None, locale=None):
+    def __init__(self, *, date_obj=None, period=None, locale=None, missing=None):
         self.date_obj = date_obj
         self.period = period
         self.locale = locale
+        self.missing = missing
 
     def __getitem__(self, k):
         if not hasattr(self, k):

@@ -19,7 +19,7 @@ class DateParser:
         date_string = strip_braces(date_string)
         date_string, ptz = pop_tz_offset_from_string(date_string)
 
-        date_obj, period = parse_method(date_string, settings=settings)
+        date_obj, period, missing = parse_method(date_string, settings=settings)
 
         _settings_tz = settings.TIMEZONE.lower()
 
@@ -50,7 +50,7 @@ class DateParser:
         ):
             date_obj = date_obj.replace(tzinfo=None)
 
-        return date_obj, period
+        return date_obj, period, missing
 
 
 date_parser = DateParser()

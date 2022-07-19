@@ -416,7 +416,7 @@ class _parser:
                                second=time.second,
                                microsecond=time.microsecond))
 
-        return self._get_datetime_obj(**params)
+        return self._get_datetime_obj(**params), missing
 
     def _correct_for_time_frame(self, dateobj):
         days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
@@ -521,7 +521,7 @@ class _parser:
     def parse(cls, datestring, settings):
         tokens = tokenizer(datestring)
         po = cls(tokens.tokenize(), settings)
-        dateobj = po._results()
+        dateobj, missing = po._results()
 
         # correction for past, future if applicable
         dateobj = po._correct_for_time_frame(dateobj)
@@ -530,7 +530,7 @@ class _parser:
         dateobj = po._correct_for_day(dateobj)
         period = po._get_period()
 
-        return dateobj, period
+        return dateobj, period, missing
 
     def _parse(self, type, token, skip_component=None):
 
