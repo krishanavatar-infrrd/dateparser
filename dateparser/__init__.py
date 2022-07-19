@@ -61,4 +61,4 @@ def parse(date_string, date_formats=None, languages=None, locales=None,
     data = parser.get_date_data(date_string, date_formats)
 
     if data:
-        return data['date_obj']
+        return data['date_obj'], data["missing"]
