@@ -11,7 +11,7 @@ from dateparser.utils import normalize_unicode, combine_dicts
 from .dictionary import Dictionary, NormalizedDictionary, ALWAYS_KEEP_TOKENS
 
 DIGIT_GROUP_PATTERN = re.compile(r'\\d\+')
-NUMERAL_PATTERN = re.compile(r'(\d+)', re.U)
+NUMERAL_PATTERN = re.compile(r'(\\d+)', re.U)
 
 
 class Locale:
@@ -169,7 +169,7 @@ class Locale:
             if normalize:
                 value = list(map(normalize_unicode, value))
             pattern = '|'.join(sorted(value, key=len, reverse=True))
-            pattern = DIGIT_GROUP_PATTERN.sub(r'?P<n>\d+', pattern)
+            pattern = DIGIT_GROUP_PATTERN.sub(r'?P<n>\\d+', pattern)
             pattern = re.compile(r'^(?:{})$'.format(pattern), re.UNICODE | re.IGNORECASE)
             relative_dictionary[pattern] = key
         return relative_dictionary
